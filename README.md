@@ -1,3 +1,11 @@
 # folder-structure
 
-pyinstaller.exe --onefile --icon = icon.ico -n Creador -w app.py
+## Create app for windows
+
+```
+pip install pyinstaller
+```
+
+```
+pyinstaller.exe app.py --onefile --icon icon.ico -n Creador -w 
+```

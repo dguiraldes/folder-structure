@@ -1,11 +1,12 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename,askdirectory
-from tree_types import scontab_tree
+from tree_types import scontab
 import os
 
 
 class MainApplication(tk.Frame):
 
+########################## Main structure
     def __init__(self, master):
         self.master = master
         tk.Frame.__init__(self, self.master)
@@ -19,34 +20,38 @@ class MainApplication(tk.Frame):
     def create_widgets(self):
         self.choose_folder_var=tk.StringVar()
         self.label_button_row(self.choose_folder_var,self.open_dir,"Seleccionar carpeta matriz",0)
+        
         self.choose_file_var=tk.StringVar()
         self.label_button_row(self.choose_file_var,self.open_file,"Seleccionar archivo de estructura",1)
-        self.tree_type(2)
-        self.generate_tree_button(3)
         
-    def label_button_row(self,var,cmd,text="",order=0):
+        self.tree_type_var=tk.StringVar()
+        self.tree_type(self.tree_type_var,2)
+
+        self.process_status_var=tk.StringVar()
+        self.label_button_row(self.process_status_var,self.generate_tree,"Generar carpetas",order=3,btn_bg='blue',btn_fg='white')
+
+
+####################### Place buttons and labels
+
+    def label_button_row(self,var,cmd,text="",order=0, btn_bg='grey', btn_fg='black'):
         var.set("")
         id_label=tk.Label(self.master, textvariable=var)
-        btn_open = tk.Button(self.master, text=text, command=cmd)
+        btn_open = tk.Button(self.master, text=text, bg=btn_bg, fg=btn_fg, command=cmd)
 
         id_label.grid(row=order, column=1, sticky="ns", padx=5, pady=5)
         btn_open.grid(row=order, column=0, sticky="ns", padx=5, pady=5)
 
-    def tree_type(self,order):
+    def tree_type(self,var,order):
         id_label=tk.Label(self.master, text="Tipo de estructura")
         OPTIONS=['SCONTAB']
-        self.tree_type_var=tk.StringVar()
-        opts=tk.OptionMenu(self.master, self.tree_type_var, *OPTIONS)
+
+        var.set('SCONTAB')
+        opts=tk.OptionMenu(self.master, var, *OPTIONS)
 
         id_label.grid(row=order, column=0, sticky="ns", padx=5, pady=5)
         opts.grid(row=order, column=1, sticky="ns", padx=5, pady=5)
-
-    def generate_tree_button(self,order):
-        btn=tk.Button(self.master, text='Generar carpetas', command=self.generate_tree)
-        btn.grid(row=order, column=0, sticky="ns", padx=5, pady=5)
         
-
-
+####################### Button methods
 
     def open_file(self):
         """Open a file for editing."""
@@ -67,16 +72,17 @@ class MainApplication(tk.Frame):
             self.choose_folder_var.set(rootpath)
 
     def generate_tree(self):
+        self.process_status_var.set('')
         root=self.choose_folder_var.get()
         level_file=self.choose_file_var.get()
         tree_type=self.tree_type_var.get()
         if root and level_file and tree_type:
             if tree_type=='SCONTAB':
-                print(root)
-                print(level_file)
-                scontab_tree(root,level_file)
+                tree=scontab(root,level_file)
+                tree.generate()
+                self.process_status_var.set(tree.status)
         else:
-            print('shet')
+            self.process_status_var.set('Faltan campos por seleccionar')
 
     
 

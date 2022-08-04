@@ -1,4 +1,5 @@
 import os
+import shutil
 import pandas as pd
 
 class folder_tree:
@@ -50,11 +51,12 @@ class folder_tree:
 
 class tree_type_1(folder_tree):
 
-    def __init__(self,root,level_file,suffix): #file_directory
+    def __init__(self,root,level_file,suffix,file_directory):
         """
         expected_columns (dict) : dict with expected column by sheet and its types
         """
         expected_columns={'CLIENTES':{'GRUPO':str,'ALIAS':str,'AINI':int,'AFIN':int},'NIVEL':{'CARPETA':str}}
+        self.file_directory=file_directory
         super().__init__(root,level_file,expected_columns,suffix)
         if self.status!='OK': return
         self.check_year_boundries()
@@ -114,6 +116,14 @@ class tree_type_1(folder_tree):
                         folders_l4=f'{l1}_[{l2}]_{self.suffix}_{l4}_{l3}'
                         path4=path3+'/'+folders_l4
                         self.create_folder_if_not_exist(path4)
+
+        ########################## Level 5: files ###############################
+                        file_folders=os.listdir(self.file_directory)
+                        if l4 in file_folders:
+                            for file in os.listdir(self.file_directory+'/'+l4):
+                                file_dir=self.file_directory+'/'+l4+'/'+file
+                                shutil.copy(file_dir,path4+'/')
+                                os.rename(path4+'/'+file,path4+'/'+folders_l4+'_'+file)
         self.status=f'Proceso exitoso. {self.created_folders} carpetas creadas'
 
 

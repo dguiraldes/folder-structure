@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 SCONT/
+SCONT_archivos/
 STAX/
 *.xlsx
 *.ipynb

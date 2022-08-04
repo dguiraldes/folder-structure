@@ -124,7 +124,7 @@ class tree_type_1(folder_tree):
                                 file_dir=self.file_directory+'/'+l4+'/'+file
                                 shutil.copy(file_dir,path4+'/')
                                 filename,extension=tuple(file.split('.'))
-                                new_file=f'{l1}_[{l2}]_{self.suffix}_{filename}_{l4}_{l3}.{extension}'
+                                new_file=f'{l1}_[{l2}]_{self.suffix}_{filename}_{l3}.{extension}'
                                 os.rename(path4+'/'+file,path4+'/'+new_file)
         self.status=f'Proceso exitoso. {self.created_folders} carpetas creadas'
 

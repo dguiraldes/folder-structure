@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename,askdirectory
-from tree_types_v2 import tree_type_1,tree_type_2
+from tree_types import tree_type_1,tree_type_2
 import os
 
 

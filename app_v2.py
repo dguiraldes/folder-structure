@@ -19,7 +19,7 @@ class MainApplication(tk.Frame):
 
     def create_widgets(self):
         self.choose_folder_var=tk.StringVar()
-        self.label_button_row(self.choose_folder_var,self.open_root_dir,"Seleccionar carpeta matriz",0)
+        self.label_button_row(self.choose_folder_var,self.open_root_dir,"Seleccionar carpeta raiz",0)
         
         self.choose_file_var=tk.StringVar()
         self.label_button_row(self.choose_file_var,self.open_file,"Seleccionar archivo de estructura",1)
@@ -40,7 +40,7 @@ class MainApplication(tk.Frame):
 
 ####################### Place buttons and labels
 
-    def label_button_row(self,var,cmd,text="",order=0, btn_bg='grey', btn_fg='black'):
+    def label_button_row(self,var,cmd,text="",order=0, btn_bg='#f0f0f0', btn_fg='black'):
         var.set("")
         id_label=tk.Label(self.master, textvariable=var)
         btn_open = tk.Button(self.master, text=text, bg=btn_bg, fg=btn_fg, command=cmd)
@@ -106,6 +106,7 @@ class MainApplication(tk.Frame):
     def changeState(self):
         pick = self.tree_type_var.get()
         if (pick == "Tipo 1"):
+            self.choose_file_directory_var.set("")
             self.choose_file_directory_button['state'] = tk.ACTIVE #means active state
         else:
             self.choose_file_directory_var.set("No requiere carpeta modelo")

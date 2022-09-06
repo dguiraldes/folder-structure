@@ -111,15 +111,21 @@ class FileExtractApp(tk.Frame):
 
 
     def extractFileNames(self):
+        """
+        Function called by "Extraer" button, used to generate output file
+        """
+        #Get values from entrys
         extraction_directory=self.extraction_directory_var.get()
         output_filename=self.output_filename_var.get()
         if extraction_directory and output_filename:
+            #Assign path of output file (at the same level of extracted info)
             dirs=extraction_directory.split('/')
             dirs.pop(-1)
             path="/".join(dirs)
             output_file=path+'/'+output_filename+'.xlsx'
+            #If file already exists open popup to check if overwrite 
             if self.overwrite or not os.path.exists(output_file):
-                create_extract_file(output_file)
+                create_extract_file(output_file,extraction_directory)
             else:
                 self.open_popup()
 
@@ -180,7 +186,7 @@ class Popup(tk.Toplevel):
         #self.geometry('300x100')
         self.title('Toplevel Window')
 
-        label = ttk.Label(self, text ="Este archivo ya existe,\n ¿quieres sobreescribirlo?")
+        label = ttk.Label(self, text ="Este archivo ya existe,\n ¿quieres sobreescribirlo?\n(Al aceptar vuelve a pinchar Extraer)")
         label.grid(row = 0, column = 0, padx = 10, pady = 10)
 
         accept_btn = ttk.Button(self,

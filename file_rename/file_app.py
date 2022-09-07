@@ -98,6 +98,11 @@ class FileExtractApp(tk.Frame):
         extraction_process_button=ttk.Button(self, text="Extraer", command= lambda : self.extractFileNames(overwrite=False))
         extraction_process_button.grid(row=3, column=1, sticky="ns", padx=5, pady=5)
 
+        self.status_var=tk.StringVar()
+        self.status_var.set("")
+        status_label=ttk.Label(self, textvariable=self.status_var)
+        status_label.grid(row=4,column=1)
+
     
     def openFolder(self,var):
         """Open a directory"""
@@ -126,7 +131,13 @@ class FileExtractApp(tk.Frame):
             output_file=os.path.join(path,output_filename+'.xlsx')
             #If file already exists open popup to check if overwrite 
             if overwrite or not os.path.exists(output_file):
-                create_extract_file(output_file,extraction_directory)
+                self.status_var.set("Creando archivo de extracción")
+                try:
+                    files=create_extract_file(output_file,extraction_directory)
+                    self.status_var.set(f'Archivo de {files} filas creado.\n{output_file}')
+                except Exception as e:
+                    self.status_var.set(f'No se pudo ejecutar el proceso:\n{str(e)}')
+
             else:
                 self.open_popup()
 
@@ -159,7 +170,7 @@ class RenameApp(tk.Frame):
         rename_file_label.grid(row=1, column=1, sticky="ns", padx=5, pady=5)
 
         buttonFrame=tk.Frame(self)
-        buttonFrame.grid(row=3,column=1)
+        buttonFrame.grid(row=2,column=1)
 
         extraction_process_button=ttk.Button(buttonFrame, text="Renombrar", command= lambda : self.Rename(copy_mode=False))
         extraction_process_button.grid(row=0, column=0, sticky="ns", padx=5, pady=5)
@@ -167,7 +178,11 @@ class RenameApp(tk.Frame):
         extraction_process_button=ttk.Button(buttonFrame, text="Copiar", command= lambda : self.Rename(copy_mode=True))
         extraction_process_button.grid(row=0, column=1, sticky="ns", padx=5, pady=5)
 
-    
+        self.status_var=tk.StringVar()
+        self.status_var.set("")
+        status_label=ttk.Label(self, textvariable=self.status_var)
+        status_label.grid(row=3,column=1)
+
 
     def open_file(self,var):
         """Open a file for editing."""
@@ -186,7 +201,16 @@ class RenameApp(tk.Frame):
         rename_file=self.rename_file_var.get()
         rename_file=os.path.normcase(rename_file)
         if rename_file:
-            rename_files(rename_file,copy_mode)
+            try:
+                self.status_var.set('Procesando')
+                results=rename_files(rename_file,copy_mode)
+                pf=results['processed_files']
+                nf=results['files_not_found']
+                type= 'copiados' if copy_mode else 'renombrados'
+                self.status_var.set(f'Listo!\nArchivos {type}: {pf}\nArchivos no encontrados: {nf}')
+            except Exception as e:
+                self.status_var.set(f'No se pudo ejecutar el proceso:\n{str(e)}')
+
 
 
 class Popup(tk.Toplevel):

@@ -58,9 +58,9 @@ class MainApplication(tk.Frame):
 
     def tree_type(self,var,order):
         id_label=tk.Label(self.master, text="Tipo de estructura")
-        OPTIONS=['Tipo 1','Tipo 2']
+        OPTIONS=['Por Grupo','Por Funcion']
 
-        var.set('Tipo 1')
+        var.set('Por Grupo')
         opts=tk.OptionMenu(self.master, var, *OPTIONS, command=lambda _:self.changeState())
 
         id_label.grid(row=order, column=0, sticky="ns", padx=5, pady=5)
@@ -105,7 +105,7 @@ class MainApplication(tk.Frame):
 
     def changeState(self):
         pick = self.tree_type_var.get()
-        if (pick == "Tipo 1"):
+        if (pick == "Por Grupo"):
             self.choose_file_directory_var.set("")
             self.choose_file_directory_button['state'] = tk.ACTIVE #means active state
         else:
@@ -121,9 +121,9 @@ class MainApplication(tk.Frame):
         file_directory=self.choose_file_directory_var.get()
         if root and level_file and tree_type and suffix:
             try:
-                if tree_type=='Tipo 1':
+                if tree_type=='Por Grupo':
                     tree=tree_type_1(root,level_file,suffix,file_directory)
-                elif tree_type=='Tipo 2':
+                elif tree_type=='Por Funcion':
                     tree=tree_type_2(root,level_file,suffix)
                 tree.generate()
                 self.process_status_var.set(tree.status)

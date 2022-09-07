@@ -46,6 +46,9 @@ class folder_tree:
 
     @staticmethod
     def check_int_boundries(series,lower_bound,upper_bound):
+        """
+        set boundries betweeen lower bound and upper bond both excluded
+        """
         return (series>lower_bound).all() and (series<upper_bound).all()
 
 
@@ -55,13 +58,16 @@ class tree_type_1(folder_tree):
         """
         expected_columns (dict) : dict with expected column by sheet and its types
         """
-        expected_columns={'CLIENTES':{'GRUPO':str,'ALIAS':str,'AINI':int,'AFIN':int},'NIVEL':{'CARPETA':str}}
+        expected_columns={'CLIENTES':{'GRUPO':str,'ALIAS':str,'AINI':int,'AFIN':int},'NIVEL':{'CARPETA':str,'AGG_MENSUAL':str}}
         self.file_directory=file_directory
         super().__init__(root,level_file,expected_columns,suffix)
         if self.status!='OK': return
         self.check_year_boundries()
     
     def check_year_boundries(self):
+        """
+        Check if defined rules are successfully met by year columns
+        """
         aini=self.sheets_dict['CLIENTES']['AINI']
         afin=self.sheets_dict['CLIENTES']['AFIN']
         checkaini=self.check_int_boundries(aini,2000,2100)
@@ -87,37 +93,46 @@ class tree_type_1(folder_tree):
         df_clientes=self.sheets_dict['CLIENTES']
         df_generos=self.sheets_dict['NIVEL']
 
-        ########################## Level 1 ###############################
+        ########################## Level : GROUPS ###############################
         lvl1=df_clientes['GRUPO'].unique()
         for l1 in lvl1:
             folders_l1=f'{l1}_{self.suffix}'
             path1=path0+'/'+folders_l1
             self.create_folder_if_not_exist(path1)
         
-        ########################## Level 2 ###############################
+        ########################## Level 2 : ALIAS ###############################
             lvl2=df_clientes[df_clientes['GRUPO']==l1]['ALIAS']
             for l2 in lvl2:
                 folders_l2=f'{l1}_[{l2}]_{self.suffix}'
                 path2=path1+'/'+folders_l2
                 self.create_folder_if_not_exist(path2)
             
-        ########################## Level 3 ###############################    
+        ########################## Level 3 : YEARS ###############################    
                 iniyear=int(df_clientes[(df_clientes['GRUPO']==l1) & (df_clientes['ALIAS']==l2)]['AINI'].iloc[0])
                 endyear=int(df_clientes[(df_clientes['GRUPO']==l1) & (df_clientes['ALIAS']==l2)]['AFIN'].iloc[0])
                 for y in range(iniyear,endyear+1):
                     l3=y-2000
+                    l3=str(l3).zfill(2)
                     folders_l3=f'{l1}_[{l2}]_{self.suffix}_{l3}'
                     path3=path2+'/'+folders_l3
                     self.create_folder_if_not_exist(path3)
         
-        ########################## Level 4 ###############################
+        ########################## Level 4 : FOLDERTYPES ###############################
                     lvl4=df_generos['CARPETA']
                     for l4 in lvl4:
                         folders_l4=f'{l1}_[{l2}]_{self.suffix}_{l4}_{l3}'
                         path4=path3+'/'+folders_l4
                         self.create_folder_if_not_exist(path4)
 
-        ########################## Level 5: files ###############################
+        ########################## Level 5 : MONTHS ###############################
+                        month_agg=(df_generos[(df_generos['CARPETA']==l4)]['AGG_MENSUAL']=='SI').any()
+                        if month_agg:
+                            for m in range (1,13):
+                                folders_l5=f'{l1}_[{l2}]_{self.suffix}_{l4}_{l3}_{str(m).zfill(2)}'
+                                path5=path4+'/'+folders_l5
+                                self.create_folder_if_not_exist(path5)
+
+        ########################## Level 5 : FILES ###############################
                         file_folders=os.listdir(self.file_directory)
                         if l4 in file_folders:
                             for file in os.listdir(self.file_directory+'/'+l4):

@@ -3,7 +3,7 @@ import shutil
 import pandas as pd
 
 class folder_tree:
-
+    #To improve code: change str1+'/'+str2 for os.path.join(str2,str2)
     def __init__(self,root,level_file,expected_columns,suffix):
         """
         root (str)              : Direction to main folder where tree is meant to be created

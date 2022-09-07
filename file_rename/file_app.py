@@ -14,6 +14,9 @@ class tkinterApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(side = "top", fill = "both", expand = True)
 
+        self.title('Renombrador')
+        #self.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)),"rename_icon.ico"))
+
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
 
@@ -62,7 +65,6 @@ class FileExtractApp(tk.Frame):
     def __init__(self, parent, controller):
         self.parent=parent
         self.controller=controller
-        self.overwrite=False
         tk.Frame.__init__(self, parent)
         self.configure_gui()
         self.widgets()
@@ -84,7 +86,7 @@ class FileExtractApp(tk.Frame):
         extraction_directory_label.grid(row=1, column=1, sticky="ns", padx=5, pady=5)
 
         self.output_filename_var=tk.StringVar()
-        self.output_filename_var.set('output')
+        self.output_filename_var.set('renombre')
         output_filename_entry=ttk.Entry(self, textvariable=self.output_filename_var)
         output_filename_label=ttk.Label(self,text='Nombre de archivo de salida')
         output_filename_suffix=ttk.Label(self,text='.xlsx')
@@ -93,13 +95,13 @@ class FileExtractApp(tk.Frame):
         output_filename_label.grid(row=2, column=0, sticky="ns", padx=5, pady=5)
         output_filename_suffix.grid(row=2,column=2)
 
-        extraction_process_button=ttk.Button(self, text="Extraer", command= lambda : self.extractFileNames())
+        extraction_process_button=ttk.Button(self, text="Extraer", command= lambda : self.extractFileNames(overwrite=False))
         extraction_process_button.grid(row=3, column=1, sticky="ns", padx=5, pady=5)
 
     
     def openFolder(self,var):
         """Open a directory"""
-        rootpath = askdirectory(initialdir=os.curdir)
+        rootpath = askdirectory(initialdir=os.curdir) #Here the the origin path is set
         if not rootpath:
             return
         else:
@@ -110,21 +112,20 @@ class FileExtractApp(tk.Frame):
         window.grab_set()
 
 
-    def extractFileNames(self):
+    def extractFileNames(self,overwrite):
         """
-        Function called by "Extraer" button, used to generate output file
+        Function called by "Extraer" button, used to extract information and generate output file
         """
         #Get values from entrys
         extraction_directory=self.extraction_directory_var.get()
+        extraction_directory=os.path.normcase(extraction_directory)
         output_filename=self.output_filename_var.get()
         if extraction_directory and output_filename:
             #Assign path of output file (at the same level of extracted info)
-            dirs=extraction_directory.split('/')
-            dirs.pop(-1)
-            path="/".join(dirs)
-            output_file=path+'/'+output_filename+'.xlsx'
+            path=os.path.split(extraction_directory)[0]
+            output_file=os.path.join(path,output_filename+'.xlsx')
             #If file already exists open popup to check if overwrite 
-            if self.overwrite or not os.path.exists(output_file):
+            if overwrite or not os.path.exists(output_file):
                 create_extract_file(output_file,extraction_directory)
             else:
                 self.open_popup()
@@ -157,8 +158,14 @@ class RenameApp(tk.Frame):
         rename_file_btn.grid(row=1, column=0, sticky="ns", padx=5, pady=5)
         rename_file_label.grid(row=1, column=1, sticky="ns", padx=5, pady=5)
 
-        extraction_process_button=ttk.Button(self, text="Renombrar", command= lambda : self.extractFileNames())
-        extraction_process_button.grid(row=3, column=1, sticky="ns", padx=5, pady=5)
+        buttonFrame=tk.Frame(self)
+        buttonFrame.grid(row=3,column=1)
+
+        extraction_process_button=ttk.Button(buttonFrame, text="Renombrar", command= lambda : self.Rename(copy_mode=False))
+        extraction_process_button.grid(row=0, column=0, sticky="ns", padx=5, pady=5)
+
+        extraction_process_button=ttk.Button(buttonFrame, text="Copiar", command= lambda : self.Rename(copy_mode=True))
+        extraction_process_button.grid(row=0, column=1, sticky="ns", padx=5, pady=5)
 
     
 
@@ -172,36 +179,49 @@ class RenameApp(tk.Frame):
             var.set(filepath)
 
 
-    def extractFileNames(self):
+    def Rename(self,copy_mode):
+        """
+        Function to rename. Normcase is used in order to correctly format path independent from the OS
+        """
         rename_file=self.rename_file_var.get()
+        rename_file=os.path.normcase(rename_file)
         if rename_file:
-            rename_files(rename_file)
+            rename_files(rename_file,copy_mode)
 
 
 class Popup(tk.Toplevel):
+    """
+    Popup opening from extractFilenames asking if overwriting file when it already exists
+    """
     def __init__(self, parent):
         self.parent=parent
         super().__init__(parent)
 
         #self.geometry('300x100')
-        self.title('Toplevel Window')
+        self.title('Archivo ya existe')
 
-        label = ttk.Label(self, text ="Este archivo ya existe,\n ¿quieres sobreescribirlo?\n(Al aceptar vuelve a pinchar Extraer)")
+        label = ttk.Label(self, text ="Este archivo ya existe,\n ¿quieres sobreescribirlo?")
         label.grid(row = 0, column = 0, padx = 10, pady = 10)
 
-        accept_btn = ttk.Button(self,
+        buttonFrame=tk.Frame(self)
+        buttonFrame.grid(row=1,column=0)
+
+        accept_btn = ttk.Button(buttonFrame,
                     text='Aceptar',
                     command=self.accept)
 
-        reject_btn= ttk.Button(self,
+        reject_btn= ttk.Button(buttonFrame,
                     text='Cancelar',
                     command=self.destroy)
 
-        accept_btn.grid(row=1, column=0)
-        reject_btn.grid(row=1, column=1)
+        accept_btn.grid(row=0, column=0)
+        reject_btn.grid(row=0, column=1)
     
     def accept(self):
-        self.parent.overwrite=True
+        """
+        If acceopt, call extract funcition with overwrite mode
+        """
+        self.parent.extractFileNames(overwrite=True)
         self.destroy()
 
 # Driver Code

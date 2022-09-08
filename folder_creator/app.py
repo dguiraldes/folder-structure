@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename,askdirectory
 from tree_types import tree_type_1,tree_type_2
-import os
+import os, sys
 
 
 class MainApplication(tk.Frame):
@@ -12,6 +12,14 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, self.master)
         self.configure_gui()
         self.create_widgets()
+
+        # Embedded app icon
+        datafile = "icon.ico" 
+        if not hasattr(sys, "frozen"):
+            datafile = os.path.join(os.path.dirname(__file__), datafile) 
+        else:  
+            datafile = os.path.join(sys.prefix, datafile)
+        self.master.iconbitmap(default=datafile)
         
     def configure_gui(self):
         self.master.title("Creador de carpetas")

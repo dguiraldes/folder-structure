@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename,askdirectory
 import os
+import sys
 from utils import create_extract_file,rename_files
 
 
@@ -14,8 +15,16 @@ class tkinterApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(side = "top", fill = "both", expand = True)
 
+        #Window title
         self.title('Renombrador')
-        #self.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)),"rename_icon.ico"))
+
+        # Embedded app icon
+        datafile = "rename_icon.ico" 
+        if not hasattr(sys, "frozen"):
+            datafile = os.path.join(os.path.dirname(__file__), datafile) 
+        else:  
+            datafile = os.path.join(sys.prefix, datafile)
+        self.iconbitmap(default=datafile)
 
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)

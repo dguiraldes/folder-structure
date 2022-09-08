@@ -113,7 +113,7 @@ class tree_type_1(folder_tree):
                 for y in range(iniyear,endyear+1):
                     l3=y-2000
                     l3=str(l3).zfill(2)
-                    folders_l3=f'{l1}_[{l2}]_{self.suffix}_{l3}'
+                    folders_l3=f'{l1}_{l2}_{self.suffix}_{l3}'
                     path3=path2+'/'+folders_l3
                     self.create_folder_if_not_exist(path3)
         
@@ -128,7 +128,7 @@ class tree_type_1(folder_tree):
                         month_agg=(df_generos[(df_generos['CARPETA']==l4)]['AGG_MENSUAL']=='SI').any()
                         if month_agg:
                             for m in range (1,13):
-                                folders_l5=f'{l1}_[{l2}]_{self.suffix}_{l4}_{l3}_{str(m).zfill(2)}'
+                                folders_l5=f'{l1}_{l2}_{self.suffix}_{l4}_{l3}_{str(m).zfill(2)}'
                                 path5=path4+'/'+folders_l5
                                 self.create_folder_if_not_exist(path5)
 
@@ -139,7 +139,7 @@ class tree_type_1(folder_tree):
                                 file_dir=self.file_directory+'/'+l4+'/'+file
                                 shutil.copy(file_dir,path4+'/')
                                 filename,extension=tuple(file.split('.'))
-                                new_file=f'{l1}_[{l2}]_{self.suffix}_{filename}_{l3}_01.{extension}'
+                                new_file=f'{l1}_{l2}_{self.suffix}_{filename}_{l3}_01.{extension}'
                                 os.rename(path4+'/'+file,path4+'/'+new_file)
         self.status=f'Proceso exitoso. {self.created_folders} carpetas creadas'
 

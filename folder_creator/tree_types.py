@@ -209,7 +209,7 @@ class tree_type_2(folder_tree):
                 for folder in incluir:
                     folder=folder.strip()
                     year=y2-2000
-                    folders_l3=f'{grupo}_[{alias}]_{self.suffix}_{folder}_{year}'
+                    folders_l3=f'{grupo}_{alias}_{self.suffix}_{folder}_{year}'
                     path2=f'{self.root}/{self.suffix}_{folder}/{self.suffix}_{folder}_{year}'
                     path3=path2+'/'+folders_l3
                     if os.path.exists(path2):

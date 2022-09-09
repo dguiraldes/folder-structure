@@ -103,7 +103,7 @@ class tree_type_1(folder_tree):
         ########################## Level 2 : ALIAS ###############################
             lvl2=df_clientes[df_clientes['GRUPO']==l1]['ALIAS']
             for l2 in lvl2:
-                folders_l2=f'{l1}_[{l2}]_{self.suffix}'
+                folders_l2=f'{l1}_{l2}_{self.suffix}'
                 path2=path1+'/'+folders_l2
                 self.create_folder_if_not_exist(path2)
             
@@ -120,7 +120,7 @@ class tree_type_1(folder_tree):
         ########################## Level 4 : FOLDERTYPES ###############################
                     lvl4=df_generos['CARPETA']
                     for l4 in lvl4:
-                        folders_l4=f'{l1}_[{l2}]_{self.suffix}_{l4}_{l3}'
+                        folders_l4=f'{l1}_{l2}_{self.suffix}_{l4}_{l3}'
                         path4=path3+'/'+folders_l4
                         self.create_folder_if_not_exist(path4)
 

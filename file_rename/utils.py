@@ -11,7 +11,7 @@ def checkFolder(directory,file_dict):
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
         if os.path.isfile(f) and not filename.startswith('.'):
-            file_dict.append({'full_path':f,'path':directory,'filename':filename})
+            file_dict.append({'full_path':f,'path':directory,'filename':filename,'full_path_len':len(f)})
         elif os.path.isdir(f):
             checkFolder(f,file_dict)
 
@@ -24,6 +24,8 @@ def create_extract_file(output_file,directory):
     info=[]
     checkFolder(directory,info)
     out_df=pd.DataFrame(info)
+    out_df['relative_path']=out_df['full_path'].str.replace(directory,'',regex=False)
+    out_df['relative_path_len']=out_df['relative_path'].apply(lambda x: len(x))
     out_df['new_file']=''
     out_df['new_path']=''
     out_df.to_excel(output_file, index=False)

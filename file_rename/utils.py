@@ -11,7 +11,14 @@ def checkFolder(directory,file_dict):
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
         if os.path.isfile(f) and not filename.startswith('.'):
-            file_dict.append({'full_path':f,'path':directory,'filename':filename,'full_path_len':len(f)})
+            file_dict.append({'full_path':f,
+                                'path':directory,
+                                'filename':filename,
+                                'full_path_len':len(f),
+                                'file_size_kB':os.path.getsize(f)/1000,
+                                'file_extension':os.path.splitext(f)[1],
+                                'file_creation': os.path.getctime(f),
+                                'file_last_modification':os.path.getmtime(f)})
         elif os.path.isdir(f):
             checkFolder(f,file_dict)
 
@@ -26,6 +33,9 @@ def create_extract_file(output_file,directory):
     out_df=pd.DataFrame(info)
     out_df['relative_path']=out_df['full_path'].str.replace(directory,'',regex=False)
     out_df['relative_path_len']=out_df['relative_path'].apply(lambda x: len(x))
+    out_df['file_creation'] = pd.to_datetime(out_df['file_creation'], unit='s')
+    out_df['file_last_modification'] = pd.to_datetime(out_df['file_last_modification'], unit='s')
+    out_df=out_df[['full_path','full_path_len','path','relative_path','relative_path_len','filename','file_extension','file_size_kB','file_creation','file_last_modification']]
     out_df['new_file']=''
     out_df['new_path']=''
     out_df.to_excel(output_file, index=False)

@@ -132,7 +132,7 @@ class FileExtractApp(tk.Frame):
         """
         #Get values from entrys
         extraction_directory=self.extraction_directory_var.get()
-        extraction_directory=os.path.normcase(extraction_directory)
+        extraction_directory=os.path.normpath(extraction_directory)
         output_filename=self.output_filename_var.get()
         if extraction_directory and output_filename:
             #Assign path of output file (at the same level of extracted info)
@@ -205,10 +205,10 @@ class RenameApp(tk.Frame):
 
     def Rename(self,copy_mode):
         """
-        Function to rename. Normcase is used in order to correctly format path independent from the OS
+        Function to rename. Normpath is used in order to correctly format path independent from the OS
         """
         rename_file=self.rename_file_var.get()
-        rename_file=os.path.normcase(rename_file)
+        rename_file=os.path.normpath(rename_file)
         if rename_file:
             try:
                 self.status_var.set('Procesando')

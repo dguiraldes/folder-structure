@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfilename,askdirectory
 import os
 import sys
 from utils import create_extract_file,rename_files
+import traceback
 
 
 class tkinterApp(tk.Tk):
@@ -143,8 +144,10 @@ class FileExtractApp(tk.Frame):
                 self.status_var.set("Creando archivo de extracción")
                 try:
                     files=create_extract_file(output_file,extraction_directory)
-                    self.status_var.set(f'Archivo de {files} filas creado.\n{output_file}')
+                    self.status_var.set(f'Archivo de {files} filas creado.\n{output_file}') #Warning! This could be improved. In case there are no files in the folder return a different message
                 except Exception as e:
+                    print(Exception)
+                    traceback.print_exception(*sys.exc_info())
                     self.status_var.set(f'No se pudo ejecutar el proceso:\n{str(e)}')
 
             else:

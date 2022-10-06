@@ -30,6 +30,7 @@ def create_extract_file(output_file,directory):
     """
     info=[]
     checkFolder(directory,info)
+    if len(info)==0: return 0
     out_df=pd.DataFrame(info)
     out_df['relative_path']=out_df['full_path'].str.replace(directory,'',regex=False)
     out_df['relative_path_len']=out_df['relative_path'].apply(lambda x: len(x))

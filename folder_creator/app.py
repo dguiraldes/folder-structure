@@ -14,7 +14,7 @@ class MainApplication(tk.Frame):
         self.create_widgets()
 
         # Embedded app icon
-        datafile = "@/icon.ico" 
+        datafile = "icon.ico" 
         if not hasattr(sys, "frozen"):
             datafile = os.path.join(os.path.dirname(__file__), datafile) 
         else:  
